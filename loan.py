@@ -8,13 +8,20 @@ loaded_model = pickle.load(open('models/loan_classifier.sav', 'rb'))
 standard_scaler = pickle.load(open('models/scaler.sav', 'rb'))
 
 def loan_prediction(input_data):
-    input_data_as_numpy = np.asarray(input_data)
+    #input_data_as_numpy = np.asarray(input_data)
+    convert_data_to_numpy = np.asarray(input_data)
+    
 
-    input_data_reshape = input_data_as_numpy.reshape(1, -1)
+    #input_data_reshape = input_data_as_numpy.reshape(1, -1)
+    reshape_input_data = convert_data_to_numpy.reshape(1, -1)
+    
+    std_data = standard_scaler.transform(reshape_input_data)
+    print(std_data)
+    
 
-    prediction = loaded_model.predict(input_data_reshape)
+    prediction = loaded_model.predict(std_data)
 
-    if prediction[0]==1:
+    if prediction==0:
         return "We're sorry, Your Loan has not been Approved."
     else:
         return "Congratulations, Your Loan has been Approved." 
@@ -37,8 +44,7 @@ def main():
         Married = st.selectbox("Married (Select 0 or 1)", options=[0, 1])
     
     with col3:
-        Dependents = st.selectbox("Dependents (0 or 1)", options=[0, 1])
-    
+        Dependents = st.number_input('Dependents', value=None)
     with col1:
         Education = st.selectbox("Education (0 or 1)", options=[0, 1])
 
